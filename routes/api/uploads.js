@@ -4,6 +4,7 @@ const router=express.Router();
 const {Storage}=require('@google-cloud/storage');
 const Multer=require('multer');
 const path=require('path');
+const jwt=require('jsonwebtoken');
 
 router.get('/',async(req,res)=>{
     res.json(await File.find());
@@ -55,7 +56,12 @@ router.post('/upload',multer.single('img'),(req,res)=>{
     blobStream.end(req.file.buffer);
 });
 
-
+router.get('/token',(req, res)=>{
+    const token=jwt.sign({},'miClave',{
+      expiresIn:'1h'
+    });
+    res.json({token});
+});
 
 
 
