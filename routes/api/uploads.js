@@ -5,8 +5,9 @@ const {Storage}=require('@google-cloud/storage');
 const Multer=require('multer');
 const path=require('path');
 const jwt=require('jsonwebtoken');
+const auth=require('./auth');
 
-router.get('/',async(req,res)=>{
+router.get('/',auth,async(req,res)=>{
     res.json(await File.find());
 });
 
@@ -15,7 +16,7 @@ const gc=new Storage({
     projectId:'rosy-environs-268816'
 });
 
-router.get('/create_bucket',(req,res)=>{
+router.get('/create_bucket',auth,(req,res)=>{
     gc.createBucket('bucket_prueba_sis719_2').then(()=>{
       res.json({message:'success'});
     }).catch(err=>{
@@ -29,7 +30,7 @@ const multer=Multer({
 
 const bucket=gc.bucket(process.env.GCLOUD_STORAGE_BUCKET||'bucket_prueba_sis719_2');
 
-router.post('/upload',multer.single('img'),(req,res)=>{
+router.post('/upload',auth,multer.single('img'),(req,res)=>{
     if(!req.file){
       res.status(400).json({message:'no enviaste archivos'});
     }
